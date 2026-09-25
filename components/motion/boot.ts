@@ -1,0 +1,2 @@
+/** Runs before paint: decides whether the preloader or a carried-over curtain should cover the first frame. */
+export const bootScript = `(function(){try{var d=document.documentElement,s=sessionStorage;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;if(s.getItem('eu-curtain')){s.removeItem('eu-curtain');d.classList.add('is-curtained')}else if(!s.getItem('eu-visited')){d.classList.add('is-preloading')}}catch(e){}})()`;
