@@ -38,7 +38,7 @@ export function FolioScene({ featured, cover }: { featured: FolioFeatured | null
     const schedule = () => { if (!frame) frame = requestAnimationFrame(paint); };
     const lean = (e: PointerEvent) => {
       if (!finePointer.matches || reducedMotion.matches) return;
-      tx = (e.clientX / window.innerWidth - .5) * 14; ty = (.5 - e.clientY / window.innerHeight) * 10;
+      tx = (e.clientX / window.innerWidth - .5) * 8; ty = (.5 - e.clientY / window.innerHeight) * 6;
       schedule();
     };
     document.documentElement.classList.add("motion-ready");
