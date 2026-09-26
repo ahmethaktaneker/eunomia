@@ -4,28 +4,35 @@ import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "reac
 import type { SearchItem } from "@/lib/search";
 import type { Copy, Locale } from "@/lib/i18n";
 import { getList, getProgress, LIST_EVENT, removeSaved, type ListItem, type Progress } from "./storage";
-import { setSound, soundOn, SOUND_EVENT } from "../motion/sound";
 
 type Labels = Copy["tools"];
 export const SEARCH_EVENT = "eu-search-open";
 
 const noop = () => () => {};
+const THEME_EVENT = "eu-theme-change";
+const subscribeTheme = (cb: () => void) => { window.addEventListener(THEME_EVENT, cb); return () => window.removeEventListener(THEME_EVENT, cb); };
+const readTheme = () => document.documentElement.dataset.theme === "light" ? "light" : "dark";
+function setTheme(theme: "light" | "dark") {
+  document.documentElement.dataset.theme = theme;
+  try { localStorage.setItem("eu-theme", theme); } catch {}
+  window.dispatchEvent(new Event(THEME_EVENT));
+}
 const isMac = () => /Mac|iPhone|iPad/.test(navigator.platform);
 
 const norm = (s: string, locale: Locale) => s.toLocaleLowerCase(locale === "tr" ? "tr" : "en").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/ı/g, "i");
 
-/** Search, reading list and sound controls that sit in the header. */
+/** Search, reading list and theme controls that sit in the header. */
 export function HeaderTools({ labels }: { labels: Labels }) {
-  const [sound, setSoundState] = useState(false);
   const mac = useSyncExternalStore(noop, isMac, () => true);
+  const theme = useSyncExternalStore(subscribeTheme, readTheme, () => "dark");
   const [open, setOpen] = useState(false);
   const [list, setList] = useState<ListItem[]>([]);
   const [progress, setProgress] = useState<Progress>({});
   useEffect(() => {
-    const sync = () => { setSoundState(soundOn()); setList(getList()); setProgress(getProgress()); };
+    const sync = () => { setList(getList()); setProgress(getProgress()); };
     sync();
-    window.addEventListener(SOUND_EVENT, sync); window.addEventListener(LIST_EVENT, sync); window.addEventListener("storage", sync);
-    return () => { window.removeEventListener(SOUND_EVENT, sync); window.removeEventListener(LIST_EVENT, sync); window.removeEventListener("storage", sync); };
+    window.addEventListener(LIST_EVENT, sync); window.addEventListener("storage", sync);
+    return () => { window.removeEventListener(LIST_EVENT, sync); window.removeEventListener("storage", sync); };
   }, []);
   useEffect(() => {
     if (!open) return;
@@ -43,8 +50,8 @@ export function HeaderTools({ labels }: { labels: Labels }) {
     <button type="button" className="tool tool-list" aria-expanded={open} onClick={() => setOpen(o => !o)} aria-label={labels.list}>
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3h10v15l-5-3.5L5 18z" /></svg>{list.length > 0 && <b>{list.length}</b>}
     </button>
-    <button type="button" className="tool tool-sound" aria-pressed={sound} onClick={() => setSound(!sound)} aria-label={`${labels.sound}: ${sound ? labels.on : labels.off}`}>
-      <span className="sound-bars" aria-hidden="true"><i /><i /><i /><i /></span>
+    <button type="button" className="tool tool-theme" onClick={() => setTheme(theme === "light" ? "dark" : "light")} aria-label={theme === "light" ? labels.dark : labels.light} title={theme === "light" ? labels.dark : labels.light}>
+      <span className="theme-orb" aria-hidden="true" />
     </button>
     {open && <div className="list-drawer" role="dialog" aria-label={labels.list}>
       {inProgress.length > 0 && <>

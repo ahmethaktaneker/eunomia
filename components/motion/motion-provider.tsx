@@ -7,7 +7,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import { initScrollEffects } from "./effects";
 import { motion, prefersReducedMotion } from "./state";
-import { tick as soundTick, turn as soundTurn } from "./sound";
 
 
 const isTr = (path: string) => path === "/tr" || path.startsWith("/tr/");
@@ -84,7 +83,6 @@ export function MotionProvider({ label }: { label: string }) {
     if (!el) return;
     const cover = () => new Promise<void>(resolve => {
       covered.current = true;
-      soundTurn();
       gsap.set(el, { visibility: "visible", pointerEvents: "auto" });
       gsap.timeline({ onComplete: resolve })
         .fromTo(el.querySelectorAll(".curtain-panel"), { yPercent: 100 }, { yPercent: 0, duration: 0.75, ease: "expo.inOut", stagger: 0.07 })
@@ -192,7 +190,6 @@ function Cursor() {
       const t = (e.target as Element | null)?.closest?.("a, button, [data-cursor]");
       const text = t?.getAttribute("data-cursor");
       const state = t ? (text ? "label" : "hover") : "";
-      if (state && state !== r.dataset.state) soundTick();
       r.dataset.state = state;
       if (text) label.textContent = text;
     };

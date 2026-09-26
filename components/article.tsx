@@ -7,7 +7,6 @@ import { getPosts, type Post } from "@/lib/content";
 import { ArticleEnhancer } from "./motion/article-enhancer";
 import { PostList, SampleBadge } from "./post-list";
 import { Arrow, Shell } from "./shell";
-import { Cover } from "./cover";
 import { ArticleToolbar, Cite, QuoteShare, TermPopover, Timeline } from "./tools/article-tools";
 import { GLOSSARY } from "@/lib/glossary";
 import { SITE } from "@/lib/site";
@@ -68,7 +67,6 @@ export async function ArticlePage({ post }: { post: Post }) {
     <main id="content" className="article">
       <div className="inner-top"><Link href={href(locale, kind)} className="back-link">← {c.article.backTo} {c.nav[kind]}</Link>{post.sample && <SampleBadge locale={locale} />}</div>
       <header className="article-head">
-        <Cover post={post} size="lg" className="article-cover" />
         <p className="kicker" data-intro-fade>{c.nav[kind]}{topic && <> &nbsp;·&nbsp; <Link href={topicHref(locale, topic.slug)} className="kicker-link">{topic.name}</Link></>} &nbsp;·&nbsp; <time dateTime={post.date}>{formatDate(post.date, locale)}</time></p>
         <h1 data-intro>{post.title}</h1>
         {post.dek && <p className="article-dek" data-intro-fade>{post.dek}</p>}
@@ -77,7 +75,7 @@ export async function ArticlePage({ post }: { post: Post }) {
           <span>{post.readingTime} {c.article.minRead}</span>
           {hasOther && <Link href={href(other, kind, slug)} hrefLang={other} className="text-link">{c.article.other} <Arrow /></Link>}
         </div>
-        <div data-intro-fade><ArticleToolbar labels={c.tools} href={href(locale, kind, slug)} title={post.title} kind={c.nav[kind]} lang={locale === "tr" ? "tr-TR" : "en-GB"} /></div>
+        <div data-intro-fade><ArticleToolbar labels={c.tools} href={href(locale, kind, slug)} title={post.title} kind={c.nav[kind]} /></div>
       </header>
       <div className="hero-rule" data-rule />
       <div className="article-grid">

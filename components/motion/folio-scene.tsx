@@ -29,6 +29,7 @@ export function FolioScene({ featured, cover }: { featured: FolioFeatured | null
       cx += (tx - cx) * .08; cy += (ty - cy) * .08;
       journey.style.setProperty("--progress", String(progress));
       journey.style.setProperty("--turn", `${-eased * 148}deg`);
+      journey.style.setProperty("--open", eased.toFixed(3));
       journey.style.setProperty("--lean-x", `${cx.toFixed(3)}deg`);
       journey.style.setProperty("--lean-y", `${cy.toFixed(3)}deg`);
       journey.dataset.chapter = progress < .25 ? "0" : progress < .67 ? "1" : "2";
@@ -58,6 +59,11 @@ export function FolioScene({ featured, cover }: { featured: FolioFeatured | null
     };
   }, []);
   const book = <>
+    <span className="folio-back" />
+    <span className="folio-spine"><i>EUNOMIA · MMXXVI</i></span>
+    <span className="folio-edge folio-edge--right" />
+    <span className="folio-edge folio-edge--top" />
+    <span className="folio-edge folio-edge--bottom" />
     <span className="folio-leaves">
       <span className="leaf-header">EUNOMIA <i>—</i> {featured?.kicker ?? "001"}</span><span className="leaf-rule" />
       {featured && <>
@@ -69,6 +75,7 @@ export function FolioScene({ featured, cover }: { featured: FolioFeatured | null
     <span className="folio-cover" aria-hidden="true"><span className="cover-front"><span className="cover-top"><b>EU.</b><span>{cover.publication}</span></span><span className="cover-emblem">E<span>U</span><i>.</i></span><span className="cover-foot"><span>EUNOMIA</span><small>{cover.foot}</small></span></span><span className="cover-inside"><span>EUNOMIA</span><i>001</i></span></span>
   </>;
   return <div className="folio-scene" ref={scene}>
+    <span className="folio-shadow" aria-hidden="true" />
     {featured
       ? <Link href={featured.href} className="folio-object" data-cursor={featured.cursor} aria-label={`${featured.cta}: ${featured.title}`}>{book}</Link>
       : <div className="folio-object" aria-hidden="true">{book}</div>}
