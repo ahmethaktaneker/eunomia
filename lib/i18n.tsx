@@ -40,7 +40,6 @@ const en = {
   prologue: {
     kicker: "An independent publication on law, politics & society",
     line: "Good order is never a given. It is a question we keep asking.",
-    alt: "Marble head and torso of Athena, Roman, 1st–2nd century CE",
   },
   letter: {
     greeting: "Dear reader,",
@@ -50,8 +49,6 @@ const en = {
       "We will not always be right. When we are wrong, we will say so in public. What I can promise is care: to ask precisely, to show the evidence, and to write for you.",
     ],
     closing: "With care,",
-    alt: "Marble statue of Eirene, the personification of peace and sister of Eunomia, Roman, ca. 14–68 CE",
-    caption: "Eirene — peace, and Eunomia's sister",
   },
   credits: { label: "Image credits", note: "All images are public domain (CC0), courtesy of The Metropolitan Museum of Art Open Access." },
   marquee: ["Law", "Politics", "Society", "Justice", "Institutions", "Democracy"],
@@ -166,7 +163,6 @@ const tr: typeof en = {
   prologue: {
     kicker: "Hukuk, siyaset ve toplum üzerine bağımsız bir yayın",
     line: "İyi düzen hiçbir zaman kendiliğinden gelmez. Sormaya devam ettiğimiz bir sorudur.",
-    alt: "Athena'nın mermer baş ve gövdesi, Roma dönemi, MS 1.–2. yüzyıl",
   },
   letter: {
     greeting: "Sevgili okur,",
@@ -176,8 +172,6 @@ const tr: typeof en = {
       "Her zaman haklı olmayacağız. Yanıldığımızda bunu herkesin önünde söyleyeceğiz. Söz verebileceğim şey özen: soruyu dikkatle sormak, kanıtı göstermek ve senin için yazmak.",
     ],
     closing: "Özenle,",
-    alt: "Barışın kişileştirmesi ve Eunomia'nın kız kardeşi Eirene'nin mermer heykeli, Roma dönemi, MS 14–68",
-    caption: "Eirene — barış ve Eunomia'nın kız kardeşi",
   },
   credits: { label: "Görsel kaynakları", note: "Tüm görseller kamu malıdır (CC0); The Metropolitan Museum of Art Open Access koleksiyonundan alınmıştır." },
   marquee: ["Hukuk", "Siyaset", "Toplum", "Adalet", "Kurumlar", "Demokrasi"],

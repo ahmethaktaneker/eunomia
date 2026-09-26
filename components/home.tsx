@@ -7,6 +7,7 @@ import { SITE } from "@/lib/site";
 import { ChapterRail } from "./motion/chapter-rail";
 import { FolioScene } from "./motion/folio-scene";
 import { GoldDust } from "./motion/gold-dust";
+import { LiquidGold } from "./motion/liquid-gold";
 import { Marquee } from "./motion/marquee";
 import { PostList, SampleBadge } from "./post-list";
 import { Arrow, Shell } from "./shell";
@@ -29,10 +30,8 @@ export function HomePage({ locale }: { locale: Locale }) {
   return <Shell locale={locale} section="home" path={href(locale, "home")}>
     <main id="content">
       <section className="prologue" data-prologue data-chapter-title={c.chapters[0]} aria-labelledby="prologue-title">
-        <div className="prologue-media" aria-hidden="true">
-          <Image src={IMAGES.athena.src} alt="" priority placeholder="blur" sizes="(max-width: 900px) 100vw, 62vw" className="prologue-img" />
-        </div>
-        <GoldDust />
+        <div className="prologue-media" aria-hidden="true"><LiquidGold /></div>
+        <GoldDust count={70} />
         <div className="prologue-top">
           <span lang="grc">Εὐνομία</span>
           <span>{c.prologue.kicker}</span>
@@ -41,7 +40,6 @@ export function HomePage({ locale }: { locale: Locale }) {
         <h1 id="prologue-title" className="prologue-word" aria-label="Eunomia"><span data-intro-chars aria-hidden="true">EUNOMIA</span></h1>
         <div className="prologue-bottom">
           <Chapter n={0} title={c.chapters[0]} />
-          <span className="prologue-caption">{c.prologue.alt}</span>
           <span className="prologue-scroll">{c.hero.scroll} <b>↓</b></span>
         </div>
       </section>
@@ -77,8 +75,7 @@ export function HomePage({ locale }: { locale: Locale }) {
 
       <section className="letter" data-chapter-title={c.chapters[2]} aria-labelledby="letter-title">
         <figure className="letter-figure">
-          <div className="letter-img"><Image src={IMAGES.eirene.src} alt={c.letter.alt} fill placeholder="blur" sizes="(max-width: 900px) 100vw, 38vw" data-parallax="6" /></div>
-          <figcaption>{c.letter.caption}</figcaption>
+          <div className="letter-img" aria-hidden="true"><LiquidGold seed={7.3} /><span className="letter-mark">§</span></div>
         </figure>
         <div className="letter-body">
           <p className="kicker"><Chapter n={2} title={c.chapters[2]} /></p>

@@ -33,7 +33,7 @@ export function initScrollEffects(introDelay: number) {
       });
       all("[data-prologue]").forEach(section => {
         const st = { trigger: section, start: "top top", end: "bottom top", scrub: true };
-        gsap.fromTo(section.querySelector(".prologue-img"), { scale: 1.04 }, { scale: 1.22, yPercent: 8, opacity: 0.25, ease: "none", scrollTrigger: st });
+        gsap.fromTo(section.querySelector(".prologue-media"), { scale: 1 }, { scale: 1.15, opacity: 0.3, ease: "none", scrollTrigger: st });
         gsap.to(section.querySelector(".prologue-word"), { yPercent: 38, letterSpacing: "0.02em", ease: "none", scrollTrigger: st });
         gsap.to(section.querySelectorAll(".prologue-top, .prologue-line, .prologue-bottom"), { autoAlpha: 0, y: -30, ease: "none", scrollTrigger: { ...st, end: "40% top" } });
         gsap.fromTo(section.querySelector(".prologue-media"), { clipPath: "inset(14% 20% 14% 20%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 2.2, ease: "expo.inOut", delay: Math.max(0, introDelay - 0.3), clearProps: "clipPath" });
