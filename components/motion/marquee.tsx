@@ -36,6 +36,6 @@ export function Marquee({ words, size = "lg" }: { words: string[]; size?: "lg" |
     gsap.ticker.add(tick);
     return () => { gsap.ticker.remove(tick); st.kill(); };
   }, []);
-  const row = <div>{words.map((w, i) => <span key={i} className={i % 2 ? "mq-outline" : undefined}>{w}<i>✳</i></span>)}</div>;
+  const row = <div>{words.map((w, i) => <span key={i} className={i % 2 ? "mq-outline" : undefined}>{w}<i>§</i></span>)}</div>;
   return <div className={`marquee marquee--${size}`} aria-hidden="true"><div className="marquee-track" ref={track}>{row}{row}</div></div>;
 }

@@ -7,7 +7,7 @@ import { bootScript } from "@/components/motion/boot";
 import { MotionProvider } from "@/components/motion/motion-provider";
 
 export const metadata: Metadata = layoutMetadata("tr");
-export const viewport: Viewport = { themeColor: "#121512", colorScheme: "dark" };
+export const viewport: Viewport = { themeColor: "#0a0a0a", colorScheme: "dark" };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <html lang="tr" className={fontVars} suppressHydrationWarning>

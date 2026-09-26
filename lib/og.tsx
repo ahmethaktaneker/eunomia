@@ -21,8 +21,8 @@ export async function renderOg({ kicker, title, footer }: { kicker: string; titl
     ...(italic ? [{ name: "Garamond", data: italic, style: "italic" as const, weight: 400 as const }] : []),
   ];
   return new ImageResponse(
-    <div style={{ width: "100%", height: "100%", display: "flex", background: "#121512", color: "#e5e1d8", fontFamily: "Garamond, serif", padding: 56 }}>
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", border: "1px solid #3b433c", padding: "44px 52px" }}>
+    <div style={{ width: "100%", height: "100%", display: "flex", background: "#0a0a0a", color: "#e5e1d8", fontFamily: "Garamond, serif", padding: 56 }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", border: "1px solid #2a2826", padding: "44px 52px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", fontSize: 22, letterSpacing: 5, color: "#b7a486", textTransform: "uppercase" }}>
           <span>{kicker}</span><span>EUNOMIA</span>
         </div>
@@ -32,7 +32,7 @@ export async function renderOg({ kicker, title, footer }: { kicker: string; titl
           <span style={{ fontSize: 120, fontStyle: "italic", lineHeight: 0.8, color: "#b7a486" }}>EU.</span>
         </div>
       </div>
-      <div style={{ width: 90, marginLeft: 26, display: "flex", background: "linear-gradient(105deg,#432b29,#583831 52%,#3a2928)", borderLeft: "8px solid #3a2523" }} />
+      <div style={{ width: 90, marginLeft: 26, display: "flex", background: "linear-gradient(105deg,#151412,#201e1a 52%,#0f0e0d)", borderLeft: "8px solid #0b0a09" }} />
     </div>,
     { ...ogSize, fonts: fonts.length ? fonts : undefined },
   );

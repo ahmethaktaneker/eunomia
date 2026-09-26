@@ -32,7 +32,7 @@ export function HomePage({ locale }: { locale: Locale }) {
       <Marquee words={c.marquee} />
 
       <section className="editorial-statement">
-        <div className="statement-meta reveal"><span>01 / {c.statementLabel}</span><span className="statement-asterisk">✳</span></div>
+        <div className="statement-meta reveal"><span>01 / {c.statementLabel}</span></div>
         <div className="statement-content">
           <h2 data-words>{c.statement}</h2>
           <p data-split>{c.statementBody}</p>
