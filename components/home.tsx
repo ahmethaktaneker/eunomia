@@ -1,13 +1,23 @@
+import Image from "next/image";
 import Link from "next/link";
 import { copy, formatDate, href, topicHref, type Locale } from "@/lib/i18n";
 import { getPosts, type PostMeta } from "@/lib/content";
+import { IMAGES, TOPIC_IMAGES } from "@/lib/images";
+import { SITE } from "@/lib/site";
+import { ChapterRail } from "./motion/chapter-rail";
 import { FolioScene } from "./motion/folio-scene";
+import { GoldDust } from "./motion/gold-dust";
 import { Marquee } from "./motion/marquee";
 import { PostList, SampleBadge } from "./post-list";
 import { Arrow, Shell } from "./shell";
 
 const GREEK = ["ε", "ὐ", "ν", "ο", "μ", "ί", "α"];
 const LATIN = ["E", "u", "n", "o", "m", "i", "a"];
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII"];
+
+function Chapter({ n, title }: { n: number; title: string }) {
+  return <span className="chapter-label"><span className="chapter-mark">{ROMAN[n]}</span><span>{title}</span></span>;
+}
 
 export function HomePage({ locale }: { locale: Locale }) {
   const c = copy[locale];
@@ -18,12 +28,30 @@ export function HomePage({ locale }: { locale: Locale }) {
   const count = (n: number) => `${String(n).padStart(2, "0")} ${n === 1 ? c.piece : c.pieces}`;
   return <Shell locale={locale} section="home" path={href(locale, "home")}>
     <main id="content">
-      <section className="journey" data-chapter="0" aria-label={c.hero.eyebrow}>
+      <section className="prologue" data-prologue data-chapter-title={c.chapters[0]} aria-labelledby="prologue-title">
+        <div className="prologue-media" aria-hidden="true">
+          <Image src={IMAGES.athena.src} alt="" priority placeholder="blur" sizes="(max-width: 900px) 100vw, 62vw" className="prologue-img" />
+        </div>
+        <GoldDust />
+        <div className="prologue-top">
+          <span lang="grc">Εὐνομία</span>
+          <span>{c.prologue.kicker}</span>
+        </div>
+        <p className="prologue-line" data-intro-fade>{c.prologue.line}</p>
+        <h1 id="prologue-title" className="prologue-word" aria-label="Eunomia"><span data-intro-chars aria-hidden="true">EUNOMIA</span></h1>
+        <div className="prologue-bottom">
+          <Chapter n={0} title={c.chapters[0]} />
+          <span className="prologue-caption">{c.prologue.alt}</span>
+          <span className="prologue-scroll">{c.hero.scroll} <b>↓</b></span>
+        </div>
+      </section>
+
+      <section className="journey" data-chapter="0" data-chapter-title={c.chapters[1]} aria-label={c.hero.eyebrow}>
         <div className="journey-stage">
-          <div className="hero-top"><span>EUNOMIA / {c.opening}</span><span>ENGLISH &nbsp; / &nbsp; TÜRKÇE</span></div>
+          <div className="hero-top"><Chapter n={1} title={c.chapters[1]} /><span>{c.opening}</span></div>
           <div className="hero-heading">
             <p className="kicker" data-intro-fade>{c.hero.eyebrow}</p>
-            <h1 data-intro>{c.hero.headline}</h1>
+            <h2 className="hero-title" data-split>{c.hero.headline}</h2>
             <p className="hero-intro" data-intro-fade>{c.hero.intro}</p>
           </div>
           <FolioScene cover={c.hero.cover} featured={featured ? { href: href(locale, featured.kind, featured.slug), kicker: c.featured, title: featured.title, dek: featured.dek, cta: c.tools.featured, cursor: c.cursor.read } : null} />
@@ -47,26 +75,25 @@ export function HomePage({ locale }: { locale: Locale }) {
 
       <Marquee words={c.marquee} />
 
-      <section className="editorial-statement">
-        <div className="statement-meta reveal"><span>{c.statementLabel}</span></div>
-        <div className="statement-content">
-          <h2 data-words>{c.statement}</h2>
-          <p data-split>{c.statementBody}</p>
+      <section className="letter" data-chapter-title={c.chapters[2]} aria-labelledby="letter-title">
+        <figure className="letter-figure">
+          <div className="letter-img"><Image src={IMAGES.eirene.src} alt={c.letter.alt} fill placeholder="blur" sizes="(max-width: 900px) 100vw, 38vw" data-parallax="6" /></div>
+          <figcaption>{c.letter.caption}</figcaption>
+        </figure>
+        <div className="letter-body">
+          <p className="kicker"><Chapter n={2} title={c.chapters[2]} /></p>
+          <h2 id="letter-title" className="letter-greeting" data-split>{c.letter.greeting}</h2>
+          {c.letter.body.map((p, i) => <p key={i} className="letter-p" {...(i === 0 ? { "data-words": true } : { "data-split": true })}>{p}</p>)}
+          <p className="letter-closing reveal">{c.letter.closing}</p>
+          <p className="letter-sign" data-sign aria-label={SITE.editor}>{SITE.editor}</p>
+          <p className="letter-role reveal">{c.role}</p>
           <div className="principles" data-stagger>{c.principles.map((p, i) => <span key={p}><small>0{i + 1}</small>{p}</span>)}</div>
         </div>
       </section>
 
-      {research.length > 0 && <section className="research-desk" aria-labelledby="research-title">
-        <div className="section-head">
-          <div><p className="kicker">{c.research.label}</p><h2 id="research-title" data-split>{c.research.title}</h2></div>
-          <Link href={href(locale, "research")} className="text-link reveal">{c.research.all} <Arrow /></Link>
-        </div>
-        <div className="research-grid" data-stagger>{research.slice(0, 2).map(p => <ResearchCard key={p.slug} post={p} locale={locale} />)}</div>
-      </section>}
-
-      <section className="name-scene" data-greek-scene aria-labelledby="name-title">
+      <section className="name-scene" data-greek-scene data-chapter-title={c.chapters[3]} aria-labelledby="name-title">
         <div className="name-stage">
-          <p className="kicker name-kicker">{c.name.label}</p>
+          <p className="kicker name-kicker"><Chapter n={3} title={c.chapters[3]} /></p>
           <div className="name-center">
             <div className="name-word" lang="grc" aria-label="Εὐνομία — Eunomia">
               {GREEK.map((g, i) => <span className="nl" key={i} aria-hidden="true"><span className="g">{g}</span><span className="l">{LATIN[i]}</span></span>)}
@@ -84,36 +111,33 @@ export function HomePage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="formats" aria-labelledby="formats-title">
+      {research.length > 0 && <section className="research-desk" data-chapter-title={c.chapters[4]} aria-labelledby="research-title">
         <div className="section-head">
-          <div><p className="kicker">{c.formatsLabel}</p><h2 id="formats-title" data-split>{c.formatsTitle}</h2></div>
-          <p className="reveal">{c.formatsIntro}</p>
+          <div><p className="kicker"><Chapter n={4} title={c.chapters[4]} /></p><h2 id="research-title" data-split>{c.research.title}</h2></div>
+          <Link href={href(locale, "research")} className="text-link reveal">{c.research.all} <Arrow /></Link>
         </div>
-        <div className="format-grid">{([["essays", essays], ["research", research]] as const).map(([s, list], i) => <Link href={href(locale, s)} className={`format format-${i + 1} reveal`} key={s} data-tilt data-cursor={c.cursor.open}>
-          <span className="format-light" aria-hidden="true" />
-          <span className="format-top"><small>{count(list.length)}</small><Arrow /></span>
-          <span className="format-type">{c.formats[i].name}</span>
-          <span className="format-bottom"><span>{c.formats[i].desc}</span><small>{c.formats[i].meta}</small></span>
-        </Link>)}</div>
-        <div className="format-status"><span className="status-dot" />{c.status}</div>
-      </section>
+        <div className="research-grid" data-stagger>{research.slice(0, 2).map(p => <ResearchCard key={p.slug} post={p} locale={locale} />)}</div>
+      </section>}
 
-      <section className="topics" data-hscroll aria-labelledby="topics-title">
+      <section className="topics" data-hscroll data-chapter-title={c.chapters[5]} aria-labelledby="topics-title">
         <div className="topics-pin">
           <div className="topics-track">
             <div className="topic-intro">
-              <p className="kicker">{c.topics.label}</p>
+              <p className="kicker"><Chapter n={5} title={c.chapters[5]} /></p>
               <h2 id="topics-title" data-split>{c.topics.title}</h2>
               <p className="topics-hint">{c.topics.hint} <b>→</b></p>
             </div>
             {c.topics.items.map((t, i) => {
               const n = all.filter(p => p.topic === t.slug).length;
+              const img = IMAGES[TOPIC_IMAGES[t.slug]];
               return <Link href={topicHref(locale, t.slug)} className="topic-card" key={t.slug} data-cursor={c.cursor.open}>
+                <span className={`topic-media topic-media--${img.kind}`} aria-hidden="true">
+                  <Image src={img.src} alt="" fill placeholder="blur" sizes="(max-width: 900px) 100vw, 40vw" />
+                </span>
                 <span className="topic-num" aria-hidden="true">0{i + 1}</span>
                 <small className="topic-count">{count(n)}</small>
                 <h3>{t.name}</h3>
                 <p>{t.desc}</p>
-                <span className="topic-frame" aria-hidden="true" />
               </Link>;
             })}
           </div>
@@ -121,8 +145,8 @@ export function HomePage({ locale }: { locale: Locale }) {
         </div>
       </section>
 
-      <section className="closing-panel" data-scale-in>
-        <p className="kicker">{c.closingLabel}</p>
+      <section className="closing-panel" data-scale-in data-chapter-title={c.chapters[6]}>
+        <p className="kicker"><Chapter n={6} title={c.chapters[6]} /></p>
         <h2 data-split>{c.closing}</h2>
         <div className="closing-bottom">
           <p className="reveal">{c.closingBody}</p>
@@ -134,6 +158,7 @@ export function HomePage({ locale }: { locale: Locale }) {
         <span className="closing-watermark" aria-hidden="true"><span data-parallax="18">EU.</span></span>
       </section>
     </main>
+    <ChapterRail />
   </Shell>;
 }
 

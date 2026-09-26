@@ -7,6 +7,7 @@ import { PostList } from "./post-list";
 import { TopicFilter } from "./topic-filter";
 import { NetworkMap, type MapLink, type MapNode } from "./tools/network-map";
 import { glossary } from "@/lib/glossary";
+import { IMAGES } from "@/lib/images";
 import { Arrow, Shell } from "./shell";
 
 type Page = (typeof PAGES)[number];
@@ -98,6 +99,13 @@ export function AboutPage({ locale }: { locale: Locale }) {
             ? SITE.editorBio[locale].split(/\n{2,}/).map((p, i) => <p key={i}>{p}</p>)
             : <p className="editor-placeholder">{locale === "tr" ? "Biyografi yakında." : "Biography coming soon."}</p>}
           {SITE.editorLinks.length > 0 && <div className="editor-links"><span className="section-index">{c.editor.links}</span>{SITE.editorLinks.map(l => <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="text-link">{l.label} <Arrow /></a>)}</div>}
+        </div>
+      </section>
+      <section className="credits" id="credits">
+        <span className="section-index">{c.credits.label}</span>
+        <div>
+          <p>{c.credits.note}</p>
+          <ul>{Object.values(IMAGES).map(img => <li key={img.url}><a href={img.url} target="_blank" rel="noopener noreferrer">{img.title}</a>, {img.date}</li>)}</ul>
         </div>
       </section>
     </main>

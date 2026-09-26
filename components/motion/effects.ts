@@ -27,6 +27,21 @@ export function initScrollEffects(introDelay: number) {
         type: "lines", mask: "lines", linesClass: "sl", autoSplit: true,
         onSplit: self => gsap.from(self.lines, { yPercent: 115, duration: 1.4, ease: "expo.out", stagger: 0.1, delay: introDelay }),
       }));
+      all("[data-intro-chars]").forEach(el => {
+        const split = SplitText.create(el, { type: "chars", charsClass: "ch" });
+        gsap.from(split.chars, { yPercent: 110, rotateX: -70, transformOrigin: "50% 100%", duration: 1.6, ease: "expo.out", stagger: 0.07, delay: introDelay });
+      });
+      all("[data-prologue]").forEach(section => {
+        const st = { trigger: section, start: "top top", end: "bottom top", scrub: true };
+        gsap.fromTo(section.querySelector(".prologue-img"), { scale: 1.04 }, { scale: 1.22, yPercent: 8, opacity: 0.25, ease: "none", scrollTrigger: st });
+        gsap.to(section.querySelector(".prologue-word"), { yPercent: 38, letterSpacing: "0.02em", ease: "none", scrollTrigger: st });
+        gsap.to(section.querySelectorAll(".prologue-top, .prologue-line, .prologue-bottom"), { autoAlpha: 0, y: -30, ease: "none", scrollTrigger: { ...st, end: "40% top" } });
+        gsap.fromTo(section.querySelector(".prologue-media"), { clipPath: "inset(14% 20% 14% 20%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 2.2, ease: "expo.inOut", delay: Math.max(0, introDelay - 0.3), clearProps: "clipPath" });
+      });
+      all("[data-sign]").forEach(el => gsap.fromTo(el, { clipPath: "inset(0 100% 0 0)" }, {
+        clipPath: "inset(0 0% 0 0)", ease: "power1.inOut",
+        scrollTrigger: { trigger: el, start: "top 88%", end: "top 55%", scrub: 0.8 },
+      }));
       all("[data-intro-fade]").forEach((el, i) => gsap.from(el, { autoAlpha: 0, y: 24, duration: 1.2, ease: "power3.out", delay: introDelay + 0.35 + i * 0.08 }));
 
       all("[data-split]").forEach(el => SplitText.create(el, {

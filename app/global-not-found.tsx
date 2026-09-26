@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./features.css";
+import "./story.css";
 import { fontVars } from "@/lib/fonts";
 import { copy } from "@/lib/i18n";
 import { NotFoundView } from "@/components/sections";

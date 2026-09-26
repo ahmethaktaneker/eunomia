@@ -39,7 +39,7 @@ export function Shell({ locale, section, path, alternate, children }: ShellProps
         <Link href={path} className="to-top" aria-label={c.article.backToTop} data-magnetic="0.4">↑</Link>
       </div>
       <div className="footer-word" aria-hidden="true"><span data-chars>EUNOMIA</span></div>
-      <div className="footer-meta"><span>© {new Date().getUTCFullYear()} Eunomia</span><span>ENGLISH / TÜRKÇE</span><span>{c.independent}</span></div>
+      <div className="footer-meta"><span>© {new Date().getUTCFullYear()} Eunomia</span><span>ENGLISH / TÜRKÇE</span><Link href={`${href(locale, "about")}#credits`}>{c.credits.label}: The Met, CC0</Link><span>{c.independent}</span></div>
     </footer>
   </div>;
 }
