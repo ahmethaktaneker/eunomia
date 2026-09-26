@@ -3,11 +3,12 @@
 import { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { saveProgress } from "../tools/storage";
 
 gsap.registerPlugin(ScrollTrigger);
 
 /** Reading progress, active table-of-contents entry and margin sidenotes for an article. */
-export function ArticleEnhancer() {
+export function ArticleEnhancer({ href, title, kind }: { href: string; title: string; kind: string }) {
   useEffect(() => {
     const article = document.querySelector<HTMLElement>(".article");
     const prose = article?.querySelector<HTMLElement>(".prose");
@@ -17,7 +18,7 @@ export function ArticleEnhancer() {
     const bar = document.querySelector<HTMLElement>(".read-progress span");
     const progress = bar && ScrollTrigger.create({
       trigger: prose, start: "top 30%", end: "bottom bottom",
-      onUpdate: self => { bar.style.transform = `scaleX(${self.progress})`; },
+      onUpdate: self => { bar.style.transform = `scaleX(${self.progress})`; saveProgress(href, title, kind, self.progress); },
     });
 
     const links = new Map([...document.querySelectorAll<HTMLAnchorElement>(".toc a")].map(a => [a.hash.slice(1), a]));
@@ -67,6 +68,6 @@ export function ArticleEnhancer() {
       window.removeEventListener("resize", layoutNotes);
       prose.removeEventListener("pointerover", highlight);
     };
-  }, []);
+  }, [href, title, kind]);
   return null;
 }

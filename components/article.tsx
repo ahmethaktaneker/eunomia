@@ -7,14 +7,50 @@ import { getPosts, type Post } from "@/lib/content";
 import { ArticleEnhancer } from "./motion/article-enhancer";
 import { PostList, SampleBadge } from "./post-list";
 import { Arrow, Shell } from "./shell";
+import { Cover } from "./cover";
+import { ArticleToolbar, Cite, QuoteShare, TermPopover, Timeline } from "./tools/article-tools";
+import { GLOSSARY } from "@/lib/glossary";
+import { SITE } from "@/lib/site";
+import type { ReactNode } from "react";
+
+function citations(post: Post, url: string) {
+  const d = new Date(post.date);
+  const author = post.author || "Eunomia";
+  if (post.locale === "tr") {
+    const date = formatDate(post.date, "tr");
+    return [
+      { name: "OSCOLA", text: `${author}, '${post.title}' (Eunomia, ${date}) <${url}>` },
+      { name: "APA", text: `${author}. (${d.getUTCFullYear()}, ${date}). ${post.title}. Eunomia. ${url}` },
+      { name: "Chicago", text: `${author}. “${post.title}.” Eunomia, ${date}. ${url}.` },
+    ];
+  }
+  const us = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" }).format(d);
+  const apa = new Intl.DateTimeFormat("en-US", { month: "long", day: "numeric", timeZone: "UTC" }).format(d);
+  return [
+    { name: "OSCOLA", text: `${author}, '${post.title}' (Eunomia, ${formatDate(post.date, "en")}) <${url}>` },
+    { name: "APA", text: `${author}. (${d.getUTCFullYear()}, ${apa}). ${post.title}. Eunomia. ${url}` },
+    { name: "Chicago", text: `${author}. “${post.title}.” Eunomia, ${us}. ${url}.` },
+  ];
+}
 
 export async function ArticlePage({ post }: { post: Post }) {
   const { locale, kind, slug } = post;
   const c = copy[locale];
   const other: Locale = locale === "en" ? "tr" : "en";
   const hasOther = post.locales.includes(other);
+  const glossaryHref = href(locale, "glossary");
+  const components = {
+    Term: ({ id, children }: { id: string; children: ReactNode }) => {
+      const entry = GLOSSARY[id]?.[locale];
+      return entry ? <TermPopover term={entry.term} def={entry.def} href={`${glossaryHref}#${id}`}>{children}</TermPopover> : <>{children}</>;
+    },
+    Timeline: ({ children }: { children: ReactNode }) => <Timeline>{children}</Timeline>,
+    Event: ({ year, title, children }: { year: string; title: string; children: ReactNode }) => <li className="tl-event"><span className="tl-year">{year}</span><div><strong>{title}</strong><span>{children}</span></div></li>,
+  };
+  const url = new URL(href(locale, kind, slug), SITE.url).href;
   const { content } = await compileMDX({
     source: post.body,
+    components,
     options: {
       mdxOptions: {
         remarkPlugins: [remarkGfm],
@@ -32,6 +68,7 @@ export async function ArticlePage({ post }: { post: Post }) {
     <main id="content" className="article">
       <div className="inner-top"><Link href={href(locale, kind)} className="back-link">← {c.article.backTo} {c.nav[kind]}</Link>{post.sample && <SampleBadge locale={locale} />}</div>
       <header className="article-head">
+        <Cover post={post} size="lg" className="article-cover" />
         <p className="kicker" data-intro-fade>{c.nav[kind]}{topic && <> &nbsp;·&nbsp; <Link href={topicHref(locale, topic.slug)} className="kicker-link">{topic.name}</Link></>} &nbsp;·&nbsp; <time dateTime={post.date}>{formatDate(post.date, locale)}</time></p>
         <h1 data-intro>{post.title}</h1>
         {post.dek && <p className="article-dek" data-intro-fade>{post.dek}</p>}
@@ -40,6 +77,7 @@ export async function ArticlePage({ post }: { post: Post }) {
           <span>{post.readingTime} {c.article.minRead}</span>
           {hasOther && <Link href={href(other, kind, slug)} hrefLang={other} className="text-link">{c.article.other} <Arrow /></Link>}
         </div>
+        <div data-intro-fade><ArticleToolbar labels={c.tools} href={href(locale, kind, slug)} title={post.title} kind={c.nav[kind]} lang={locale === "tr" ? "tr-TR" : "en-GB"} /></div>
       </header>
       <div className="hero-rule" data-rule />
       <div className="article-grid">
@@ -59,6 +97,7 @@ export async function ArticlePage({ post }: { post: Post }) {
             </>}
           </section>}
           <div className="prose">{content}</div>
+          <Cite labels={c.tools} formats={citations(post, url)} />
         </div>
         <div className="article-notes" aria-hidden="true" />
       </div>
@@ -71,6 +110,7 @@ export async function ArticlePage({ post }: { post: Post }) {
         <PostList posts={more} locale={locale} />
       </section>}
     </main>
-    <ArticleEnhancer />
+    <ArticleEnhancer href={href(locale, kind, slug)} title={post.title} kind={c.nav[kind]} />
+    <QuoteShare labels={c.tools} title={post.title} url={url} />
   </Shell>;
 }

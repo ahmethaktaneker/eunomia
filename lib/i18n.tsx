@@ -1,12 +1,14 @@
 export type Locale = "en" | "tr";
 export type Kind = "essays" | "research";
-export type Section = "home" | Kind | "about" | "contribute";
+export type Section = "home" | Kind | "about" | "contribute" | "explore" | "glossary";
 
 export const LOCALES: Locale[] = ["en", "tr"];
 export const KINDS: Kind[] = ["essays", "research"];
 export const TOPICS = ["public-life", "institutions", "justice", "democracy"] as const;
 export type Topic = (typeof TOPICS)[number];
 export const PAGES: Exclude<Section, "home">[] = ["essays", "research", "about", "contribute"];
+/** Pages outside the main navigation (footer, search and in-page links reach them). */
+export const EXTRA_PAGES: Exclude<Section, "home">[] = ["explore", "glossary"];
 
 export function href(locale: Locale, section: Section, slug?: string) {
   const base = locale === "tr" ? "/tr" : "";
@@ -23,7 +25,7 @@ export function formatDate(date: string, locale: Locale) {
 }
 
 const en = {
-  nav: { essays: "Essays", research: "Research", about: "About", contribute: "Contribute" },
+  nav: { essays: "Essays", research: "Research", about: "About", contribute: "Contribute", explore: "Explore", glossary: "Glossary" },
   skip: "Skip to content", mainNav: "Main navigation", home: "Eunomia, home",
   cursor: { read: "Read", open: "Open" },
   hero: {
@@ -31,7 +33,7 @@ const en = {
     headline: <>Public life,<br /><em>examined.</em></>,
     intro: "A bilingual publication for arguments that deserve evidence, context and a wider conversation.",
     scroll: "Scroll to open", stages: ["The cover", "The inquiry", "The publication"],
-    leaf: <>A closer<br /><em>reading</em> of<br />public life.</>, leafFoot: "Essays / Research / Two languages",
+    cover: { publication: "An independent publication", foot: "Law / Politics / Society · Est. 2026" },
   },
   opening: "Issue 01 — Autumn 2026",
   marquee: ["Law", "Politics", "Society", "Justice", "Institutions", "Democracy"],
@@ -79,6 +81,8 @@ const en = {
     research: "Long-form analysis with its sources and method in view.",
     about: "The people, purpose and editorial standards behind the publication.",
     contribute: "Pitch an essay or a piece of research, in English or Turkish.",
+    explore: "Every piece and topic as a map. Drag, hover and follow the connections.",
+    glossary: "Short, plain definitions of the legal and political terms used across the publication.",
   },
   coming: "In preparation", published: "Published", archive: "The archive",
   archiveIntro: {
@@ -112,13 +116,25 @@ const en = {
     contents: "Contents", notes: "Sources & notes", backTo: "Back to", other: "Read in Türkçe",
     by: "By", minRead: "min read", next: "Continue reading", backToTop: "Back to top", progress: "Reading progress",
   },
+  tools: {
+    listen: "Listen", pause: "Pause", resume: "Resume", stop: "Stop", noVoice: "Read-aloud is not supported in this browser.",
+    paper: "Reading mode", save: "Save", saved: "Saved", list: "My list", listEmpty: "Nothing saved yet. Use the bookmark on any piece to keep it here.",
+    continue: "Continue reading", remove: "Remove", read: "read",
+    search: "Search", searchHint: "Search essays, topics and terms…", noResults: "Nothing matches that yet.", openSearch: "Open search",
+    sound: "Sound", on: "On", off: "Off",
+    copyQuote: "Copy quote", shareX: "Share on X", copied: "Copied",
+    cite: "Cite this piece", copy: "Copy",
+    featured: "Read the featured piece", term: "Term", allTerms: "All terms", explore: "Explore the map",
+    mapHint: "Drag the stars · hover to trace connections · click to read",
+  },
+  editor: { label: "The editor", links: "Elsewhere" },
   footer: "Independent writing on law, politics & society.", independent: "Independent publication", rss: "RSS",
   notFound: { title: <>Lost in<br /><em>the archive.</em></>, body: "This page has not been written yet — or it has moved elsewhere.", home: "Return to the front page" },
   preloader: "Law / Politics / Society",
 };
 
 const tr: typeof en = {
-  nav: { essays: "Yazılar", research: "Araştırmalar", about: "Hakkında", contribute: "Katkı" },
+  nav: { essays: "Yazılar", research: "Araştırmalar", about: "Hakkında", contribute: "Katkı", explore: "Keşfet", glossary: "Sözlük" },
   skip: "İçeriğe geç", mainNav: "Ana menü", home: "Eunomia, ana sayfa",
   cursor: { read: "Oku", open: "Aç" },
   hero: {
@@ -126,7 +142,7 @@ const tr: typeof en = {
     headline: <>Kamusal hayatı<br /><em>yakından oku.</em></>,
     intro: "Kanıta, bağlama ve daha geniş bir tartışmaya yer açan iki dilli bir yayın.",
     scroll: "Açmak için kaydır", stages: ["Kapak", "İnceleme", "Yayın"],
-    leaf: <>Kamusal<br />hayata <em>yakından</em><br />bakmak.</>, leafFoot: "Yazılar / Araştırmalar / İki dil",
+    cover: { publication: "Bağımsız bir yayın", foot: "Hukuk / Siyaset / Toplum · Kuruluş 2026" },
   },
   opening: "Sayı 01 — Sonbahar 2026",
   marquee: ["Hukuk", "Siyaset", "Toplum", "Adalet", "Kurumlar", "Demokrasi"],
@@ -174,6 +190,8 @@ const tr: typeof en = {
     research: "Kaynakları ve yöntemi görünür kılan kapsamlı incelemeler.",
     about: "Yayının amacı, ekibi ve editoryal ilkeleri.",
     contribute: "Türkçe ya da İngilizce bir yazı veya araştırma öner.",
+    explore: "Tüm yazılar ve konular bir harita olarak. Sürükle, üzerine gel ve bağlantıları izle.",
+    glossary: "Yayın boyunca kullanılan hukuki ve siyasi terimlerin kısa ve sade tanımları.",
   },
   coming: "Hazırlanıyor", published: "Yayımlandı", archive: "Arşiv",
   archiveIntro: {
@@ -207,6 +225,18 @@ const tr: typeof en = {
     contents: "İçindekiler", notes: "Kaynaklar ve notlar", backTo: "Geri dön:", other: "Read in English",
     by: "Yazan", minRead: "dk okuma", next: "Okumaya devam et", backToTop: "Başa dön", progress: "Okuma ilerlemesi",
   },
+  tools: {
+    listen: "Dinle", pause: "Duraklat", resume: "Devam et", stop: "Durdur", noVoice: "Bu tarayıcı sesli okumayı desteklemiyor.",
+    paper: "Okuma modu", save: "Kaydet", saved: "Kaydedildi", list: "Listem", listEmpty: "Henüz bir şey kaydetmedin. Herhangi bir yazıdaki yer imiyle burada tutabilirsin.",
+    continue: "Kaldığın yerden devam et", remove: "Kaldır", read: "okundu",
+    search: "Ara", searchHint: "Yazı, konu ve terim ara…", noResults: "Henüz eşleşen bir şey yok.", openSearch: "Aramayı aç",
+    sound: "Ses", on: "Açık", off: "Kapalı",
+    copyQuote: "Alıntıyı kopyala", shareX: "X'te paylaş", copied: "Kopyalandı",
+    cite: "Bu yazıya atıf yap", copy: "Kopyala",
+    featured: "Öne çıkan yazıyı oku", term: "Terim", allTerms: "Tüm terimler", explore: "Haritayı keşfet",
+    mapHint: "Yıldızları sürükle · bağlantılar için üzerine gel · okumak için tıkla",
+  },
+  editor: { label: "Editör", links: "Diğer bağlantılar" },
   footer: "Hukuk, siyaset ve toplum üzerine bağımsız yazılar.", independent: "Bağımsız yayın", rss: "RSS",
   notFound: { title: <>Arşivde<br /><em>kaybolduk.</em></>, body: "Bu sayfa henüz yazılmadı — ya da başka bir yere taşındı.", home: "Ana sayfaya dön" },
   preloader: "Hukuk / Siyaset / Toplum",

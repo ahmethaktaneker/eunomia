@@ -97,7 +97,7 @@ html[data-header="hidden"] .site-header{transform:translateY(-102%)}
 
 /* ───────── Hero: scroll-opened folio ───────── */
 /* Scroll sequence adapted from the native CSS book in the owner's personal site. */
-.journey{position:relative;height:195svh;min-height:1260px;--progress:0;--turn:0deg}
+.journey{position:relative;height:150svh;min-height:1000px;--progress:0;--turn:0deg}
 .journey-stage{position:sticky;top:0;height:100svh;min-height:680px;max-height:1100px;overflow:hidden;isolation:isolate;background:radial-gradient(ellipse 31% 40% at 79% 53%,#b7a48614,transparent 80%),var(--bg)}
 .journey-stage:before{content:"";position:absolute;top:5%;bottom:8%;left:59%;border-left:1px solid #ffffff11}
 .hero-top,.hero-bottom{position:absolute;left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;font:10px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
@@ -395,8 +395,8 @@ html:not(.has-motion) .nl .l{visibility:hidden}
   .site-header{height:auto;grid-template-columns:1fr auto;gap:8px;padding-top:16px}
   .brand-monogram{font-size:28px}.brand-name{font-size:8px}
   .site-header nav{grid-column:1/-1;grid-row:2;justify-content:space-between;padding:12px 0 10px}
-  .language{grid-column:2;grid-row:1}
-  .journey{height:175svh;min-height:1000px}.journey-stage{min-height:650px}
+  .header-right{grid-column:2;grid-row:1}
+  .journey{height:140svh;min-height:900px}.journey-stage{min-height:650px}
   .hero-top{top:20px}.hero-top span:last-child{display:none}
   .hero-heading{top:12%;right:0}.hero-heading h1{font-size:clamp(62px,12.4vw,96px);margin:20px 0 16px}.hero-intro{font-size:17px;max-width:330px}
   .folio-scene{width:clamp(230px,45vw,330px);height:43%;max-height:380px;right:13%;top:49%}
@@ -416,7 +416,7 @@ html:not(.has-motion) .nl .l{visibility:hidden}
 }
 @media(max-width:550px){
   .site-header nav a,.language{font-size:9px;letter-spacing:.14em}
-  .journey{height:160svh;min-height:940px}.journey-stage{min-height:630px}
+  .journey{height:135svh;min-height:860px}.journey-stage{min-height:630px}
   .kicker{font-size:9px}.hero-top,.hero-bottom{font-size:8px}
   .hero-heading{top:11%}.hero-heading h1{font-size:clamp(56px,13vw,76px)}.hero-intro{max-width:300px;font-size:16px}
   .folio-scene{top:45%;right:13%;width:48%;height:44%;min-width:190px}.folio-object{transform:rotate(8deg)}

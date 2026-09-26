@@ -1,11 +1,15 @@
 "use client";
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef } from "react";
+import Link from "next/link";
+
+export type FolioFeatured = { href: string; kicker: string; title: string; dek: string; cta: string; cursor: string };
+export type FolioCover = { publication: string; foot: string };
 
 const clamp = (value: number) => Math.max(0, Math.min(1, value));
 
 /** CSS perspective and a hinged cover. The book remains visible without JavaScript. */
-export function FolioScene({ leaf, leafFoot }: { leaf: ReactNode; leafFoot: string }) {
+export function FolioScene({ featured, cover }: { featured: FolioFeatured | null; cover: FolioCover }) {
   const scene = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const element = scene.current;
@@ -20,7 +24,7 @@ export function FolioScene({ leaf, leafFoot }: { leaf: ReactNode; leafFoot: stri
       frame = 0;
       const distance = Math.max(1, journey.offsetHeight - stage.offsetHeight);
       const progress = reducedMotion.matches ? 0 : clamp(-journey.getBoundingClientRect().top / distance);
-      const opening = clamp((progress - .10) / .78);
+      const opening = clamp((progress - .04) / .66);
       const eased = opening * opening * (3 - 2 * opening);
       cx += (tx - cx) * .08; cy += (ty - cy) * .08;
       journey.style.setProperty("--progress", String(progress));
@@ -53,8 +57,20 @@ export function FolioScene({ leaf, leafFoot }: { leaf: ReactNode; leafFoot: stri
       reducedMotion.removeEventListener("change", schedule);
     };
   }, []);
-  return <div className="folio-scene" ref={scene} aria-hidden="true"><div className="folio-object">
-    <div className="folio-leaves"><span className="leaf-header">EUNOMIA <i>—</i> 001</span><span className="leaf-rule" /><span className="leaf-title">{leaf}</span><span className="leaf-bottom">{leafFoot}</span></div>
-    <div className="folio-cover"><div className="cover-front"><span className="cover-top"><b>EU.</b><span>AN INDEPENDENT<br />PUBLICATION</span></span><span className="cover-emblem">E<span>U</span><i>.</i></span><span className="cover-foot"><span>EUNOMIA</span><small>LAW / POLITICS / SOCIETY<br />EST. 2026 &nbsp;·&nbsp; EN / TR</small></span></div><div className="cover-inside"><span>EUNOMIA</span><i>001</i></div></div>
-  </div></div>;
+  const book = <>
+    <span className="folio-leaves">
+      <span className="leaf-header">EUNOMIA <i>—</i> {featured?.kicker ?? "001"}</span><span className="leaf-rule" />
+      {featured && <>
+        <span className={`leaf-title${featured.title.length > 34 ? " leaf-title--long" : ""}`}>{featured.title}</span>
+        <span className="leaf-dek">{featured.dek}</span>
+        <span className="leaf-bottom"><span>{featured.cta}</span><b>→</b></span>
+      </>}
+    </span>
+    <span className="folio-cover" aria-hidden="true"><span className="cover-front"><span className="cover-top"><b>EU.</b><span>{cover.publication}</span></span><span className="cover-emblem">E<span>U</span><i>.</i></span><span className="cover-foot"><span>EUNOMIA</span><small>{cover.foot}</small></span></span><span className="cover-inside"><span>EUNOMIA</span><i>001</i></span></span>
+  </>;
+  return <div className="folio-scene" ref={scene}>
+    {featured
+      ? <Link href={featured.href} className="folio-object" data-cursor={featured.cursor} aria-label={`${featured.cta}: ${featured.title}`}>{book}</Link>
+      : <div className="folio-object" aria-hidden="true">{book}</div>}
+  </div>;
 }

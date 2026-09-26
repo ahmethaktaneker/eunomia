@@ -5,6 +5,7 @@ import { FolioScene } from "./motion/folio-scene";
 import { Marquee } from "./motion/marquee";
 import { PostList, SampleBadge } from "./post-list";
 import { Arrow, Shell } from "./shell";
+import { Cover } from "./cover";
 
 const GREEK = ["ε", "ὐ", "ν", "ο", "μ", "ί", "α"];
 const LATIN = ["E", "u", "n", "o", "m", "i", "a"];
@@ -26,7 +27,7 @@ export function HomePage({ locale }: { locale: Locale }) {
             <h1 data-intro>{c.hero.headline}</h1>
             <p className="hero-intro" data-intro-fade>{c.hero.intro}</p>
           </div>
-          <FolioScene leaf={c.hero.leaf} leafFoot={c.hero.leafFoot} />
+          <FolioScene cover={c.hero.cover} featured={featured ? { href: href(locale, featured.kind, featured.slug), kicker: c.featured, title: featured.title, dek: featured.dek, cta: c.tools.featured, cursor: c.cursor.read } : null} />
           <div className="hero-bottom"><span>{c.hero.scroll} <b>↓</b></span><span className="hero-chapter">{c.hero.stages.map((item, i) => <i key={item} className={`chapter-${i}`}>0{i + 1} / {item}</i>)}</span></div>
           <div className="hero-progress" aria-hidden="true"><span /></div>
         </div>
@@ -141,6 +142,7 @@ function Featured({ post, locale }: { post: PostMeta; locale: Locale }) {
   const c = copy[locale];
   const topic = c.topics.items.find(t => t.slug === post.topic);
   return <Link href={href(locale, post.kind, post.slug)} className="featured reveal" data-cursor={c.cursor.read}>
+    <Cover post={post} size="lg" className="featured-cover" />
     <span className="featured-meta">
       <span className="kicker">{c.featured} · {c.nav[post.kind]}</span>
       {topic && <span>{topic.name}</span>}
@@ -158,6 +160,7 @@ function ResearchCard({ post, locale }: { post: PostMeta; locale: Locale }) {
   return <Link href={href(locale, post.kind, post.slug)} className="research-card" data-tilt data-cursor={c.cursor.read}>
     <span className="format-light" aria-hidden="true" />
     <span className="research-card-top"><small>{c.research.abstract}</small>{post.sample && <SampleBadge locale={locale} />}</span>
+    <Cover post={post} size="sm" className="research-card-cover" />
     <span className="research-card-title">{post.title}</span>
     <span className="research-card-abstract">{post.abstract || post.dek}</span>
     <span className="research-card-bottom"><small>{formatDate(post.date, locale)} · {post.readingTime} {c.latest.minRead}</small><Arrow /></span>

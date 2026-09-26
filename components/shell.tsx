@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { copy, href, PAGES, type Locale, type Section } from "@/lib/i18n";
+import { copy, EXTRA_PAGES, href, PAGES, type Locale, type Section } from "@/lib/i18n";
+import { HeaderTools } from "./tools/header-tools";
 
 type ShellProps = {
   locale: Locale; section: Section; path: string;
@@ -17,7 +18,10 @@ export function Shell({ locale, section, path, alternate, children }: ShellProps
     <header className="site-header">
       <Link href={href(locale, "home")} className="brand" aria-label={c.home}><span className="brand-monogram">EU<span>.</span></span><span className="brand-name">EUNOMIA</span></Link>
       <nav aria-label={c.mainNav}>{PAGES.map(s => <Link key={s} href={href(locale, s)} aria-current={s === section ? "page" : undefined} className="roll"><span data-text={c.nav[s]}>{c.nav[s]}</span></Link>)}</nav>
+      <div className="header-right">
+      <HeaderTools labels={c.tools} />
       <div className="language">{(["en", "tr"] as const).map((l, i) => <span key={l}>{i > 0 && <i>/</i>}<Link href={langHref[l]} hrefLang={l} lang={l} aria-current={l === locale ? "page" : undefined}>{l.toUpperCase()}</Link></span>)}</div>
+      </div>
     </header>
     {children}
     <footer className="site-footer">
@@ -26,7 +30,7 @@ export function Shell({ locale, section, path, alternate, children }: ShellProps
           <p className="kicker">{c.footer}</p>
           <Link href={href(locale, "contribute")} className="footer-cta-link" data-cursor={c.cursor.open}><span>{c.contributeLink}</span> <i>↗</i></Link>
         </div>
-        <nav className="footer-nav" aria-label={c.mainNav}>{PAGES.map(s => <Link key={s} href={href(locale, s)} className="roll"><span data-text={c.nav[s]}>{c.nav[s]}</span></Link>)}</nav>
+        <nav className="footer-nav" aria-label={c.mainNav}>{[...PAGES, ...EXTRA_PAGES].map(s => <Link key={s} href={href(locale, s)} className="roll"><span data-text={c.nav[s]}>{c.nav[s]}</span></Link>)}</nav>
         <div className="footer-nav">
           <Link href={langHref.en} hrefLang="en" className="roll"><span data-text="English">English</span></Link>
           <Link href={langHref.tr} hrefLang="tr" className="roll"><span data-text="Türkçe">Türkçe</span></Link>

@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { HomePage } from "@/components/home";
-import { AboutPage, ArchivePage, ContributePage, TopicPage } from "@/components/sections";
+import { AboutPage, ArchivePage, ContributePage, ExplorePage, GlossaryPage, TopicPage } from "@/components/sections";
 import { ArticlePage } from "@/components/article";
 import { getPost, postParams } from "./content";
-import { copy, href, KINDS, PAGES, TOPICS, topicHref, type Kind, type Locale } from "./i18n";
+import { copy, EXTRA_PAGES, href, KINDS, PAGES, TOPICS, topicHref, type Kind, type Locale } from "./i18n";
 import { SITE } from "./site";
 
 const HOME_TITLE = { en: "Eunomia — Law, politics & public life", tr: "Eunomia — Hukuk, siyaset ve kamusal hayat" };
@@ -49,9 +49,10 @@ export function homeRoute(locale: Locale) {
 
 type SectionParams = { params: Promise<{ section: string }> };
 export function sectionRoute(locale: Locale) {
-  const valid = (s: string): s is (typeof PAGES)[number] => (PAGES as string[]).includes(s);
+  const all = [...PAGES, ...EXTRA_PAGES];
+  const valid = (s: string): s is (typeof all)[number] => (all as string[]).includes(s);
   return {
-    generateStaticParams: () => PAGES.map(section => ({ section })),
+    generateStaticParams: () => all.map(section => ({ section })),
     generateMetadata: async ({ params }: SectionParams): Promise<Metadata> => {
       const { section } = await params;
       if (!valid(section)) return {};
@@ -62,6 +63,8 @@ export function sectionRoute(locale: Locale) {
       if (!valid(section)) notFound();
       if (section === "about") return <AboutPage locale={locale} />;
       if (section === "contribute") return <ContributePage locale={locale} />;
+      if (section === "explore") return <ExplorePage locale={locale} />;
+      if (section === "glossary") return <GlossaryPage locale={locale} />;
       return <ArchivePage locale={locale} kind={section} />;
     },
   };

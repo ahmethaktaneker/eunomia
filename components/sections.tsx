@@ -5,6 +5,8 @@ import { getPosts } from "@/lib/content";
 import { SITE } from "@/lib/site";
 import { PostList } from "./post-list";
 import { TopicFilter } from "./topic-filter";
+import { NetworkMap, type MapLink, type MapNode } from "./tools/network-map";
+import { glossary } from "@/lib/glossary";
 import { Arrow, Shell } from "./shell";
 
 type Page = (typeof PAGES)[number];
@@ -81,7 +83,23 @@ export function AboutPage({ locale }: { locale: Locale }) {
           <ul className="sisters sisters--static" data-stagger>{c.name.sisters.map(s => <li className="sister" key={s.name}><span lang="grc">{s.greek}</span><strong>{s.name}</strong><small>{s.role}</small></li>)}</ul>
         </div>
       </section>
-      <div className="editor-signature reveal"><span className="signature-mark">EU.</span><div><strong>{SITE.editor}</strong><span>{c.role}</span></div></div>
+      <section className="editor reveal" aria-label={c.editor.label}>
+        <div className="editor-portrait">
+          {SITE.editorPhoto
+            // eslint-disable-next-line @next/next/no-img-element
+            ? <img src={SITE.editorPhoto} alt={SITE.editor} />
+            : <span className="editor-monogram" aria-hidden="true">{SITE.editor.split(" ").map(w => w[0]).slice(0, 2).join("")}<i>.</i></span>}
+        </div>
+        <div className="editor-text">
+          <span className="section-index">{c.editor.label}</span>
+          <strong>{SITE.editor}</strong>
+          <span className="editor-role">{c.role}</span>
+          {SITE.editorBio[locale]
+            ? SITE.editorBio[locale].split(/\n{2,}/).map((p, i) => <p key={i}>{p}</p>)
+            : <p className="editor-placeholder">{locale === "tr" ? "Biyografi yakında." : "Biography coming soon."}</p>}
+          {SITE.editorLinks.length > 0 && <div className="editor-links"><span className="section-index">{c.editor.links}</span>{SITE.editorLinks.map(l => <a key={l.url} href={l.url} target="_blank" rel="noopener noreferrer" className="text-link">{l.label} <Arrow /></a>)}</div>}
+        </div>
+      </section>
     </main>
   </Shell>;
 }
@@ -107,6 +125,46 @@ export function ContributePage({ locale }: { locale: Locale }) {
           : <p className="format-status"><span className="status-dot" />{k.soon}</p>}
         <Link className="text-link" href={href(locale, "about")}>{c.aboutLink} <Arrow /></Link>
       </div>
+    </main>
+  </Shell>;
+}
+
+export function ExplorePage({ locale }: { locale: Locale }) {
+  const c = copy[locale];
+  const posts = getPosts(locale);
+  const nodes: MapNode[] = [
+    ...c.topics.items.map(t => ({ id: `t:${t.slug}`, label: t.name, sub: c.topicPage.label, href: topicHref(locale, t.slug), kind: "topic" as const })),
+    ...posts.map(p => ({ id: `p:${p.kind}/${p.slug}`, label: p.title, sub: c.nav[p.kind], href: href(locale, p.kind, p.slug), kind: p.kind })),
+  ];
+  const links: MapLink[] = posts.filter(p => p.topic).map(p => ({ source: `p:${p.kind}/${p.slug}`, target: `t:${p.topic}`, strong: true }));
+  posts.forEach((p, i) => posts.slice(i + 1).forEach(q => {
+    if (p.tags.some(t => q.tags.includes(t))) links.push({ source: `p:${p.kind}/${p.slug}`, target: `p:${q.kind}/${q.slug}` });
+  }));
+  return <Shell locale={locale} section="explore" path={href(locale, "explore")}>
+    <main id="content" className="inner-page">
+      <InnerHero locale={locale} section="explore" kicker={`${posts.length} ${c.pieces} · ${c.topics.items.length} ${c.topicPage.label}`} />
+      <NetworkMap nodes={nodes} links={links} hint={c.tools.mapHint} />
+      <TopicRows locale={locale} />
+    </main>
+  </Shell>;
+}
+
+export function GlossaryPage({ locale }: { locale: Locale }) {
+  const c = copy[locale];
+  const terms = glossary(locale);
+  const letters = [...new Set(terms.map(t => t.term[0].toLocaleUpperCase(locale)))];
+  return <Shell locale={locale} section="glossary" path={href(locale, "glossary")}>
+    <main id="content" className="inner-page">
+      <InnerHero locale={locale} section="glossary" kicker={`${terms.length} ${c.tools.term}`} />
+      <nav className="glossary-letters" aria-label={c.tools.allTerms}>{letters.map(l => <a key={l} href={`#letter-${l}`}>{l}</a>)}</nav>
+      <dl className="glossary" data-stagger>{terms.map((t, i) => {
+        const letter = t.term[0].toLocaleUpperCase(locale);
+        const first = i === 0 || terms[i - 1].term[0].toLocaleUpperCase(locale) !== letter;
+        return <div key={t.id} id={t.id} className="glossary-entry">
+          <span className="glossary-letter" id={first ? `letter-${letter}` : undefined}>{first ? letter : ""}</span>
+          <dt>{t.term}</dt><dd>{t.def}</dd>
+        </div>;
+      })}</dl>
     </main>
   </Shell>;
 }
