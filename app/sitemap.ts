@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getPosts } from "@/lib/content";
-import { href, PAGES, type Section } from "@/lib/i18n";
+import { href, PAGES, TOPICS, topicHref, type Section } from "@/lib/i18n";
 import { SITE } from "@/lib/site";
 
 const abs = (path: string) => new URL(path, SITE.url).href;
@@ -20,5 +20,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.8,
     alternates: { languages: Object.fromEntries(p.locales.map(o => [o, abs(href(o, p.kind, p.slug))])) },
   })));
-  return [...pages, ...posts];
+  const topics = TOPICS.flatMap(t => (["en", "tr"] as const).map(l => ({
+    url: abs(topicHref(l, t)),
+    changeFrequency: "weekly" as const,
+    priority: 0.6,
+    alternates: { languages: { en: abs(topicHref("en", t)), tr: abs(topicHref("tr", t)) } },
+  })));
+  return [...pages, ...posts, ...topics];
 }

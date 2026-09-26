@@ -8,4 +8,6 @@ export const SITE = {
   editor: "Ahmet Haktan Eker",
   /** Public address for pitches. Leave empty to hide the "send a pitch" button. */
   contactEmail: "",
+  /** Pieces marked `sample: true` are demo content. Set to false to hide them all at once. */
+  showSamples: true,
 };

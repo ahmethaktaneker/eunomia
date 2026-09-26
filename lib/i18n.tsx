@@ -4,12 +4,18 @@ export type Section = "home" | Kind | "about" | "contribute";
 
 export const LOCALES: Locale[] = ["en", "tr"];
 export const KINDS: Kind[] = ["essays", "research"];
+export const TOPICS = ["public-life", "institutions", "justice", "democracy"] as const;
+export type Topic = (typeof TOPICS)[number];
 export const PAGES: Exclude<Section, "home">[] = ["essays", "research", "about", "contribute"];
 
 export function href(locale: Locale, section: Section, slug?: string) {
   const base = locale === "tr" ? "/tr" : "";
   if (section === "home") return base || "/";
   return `${base}/${section}${slug ? `/${slug}` : ""}`;
+}
+
+export function topicHref(locale: Locale, topic: string) {
+  return `${locale === "tr" ? "/tr" : ""}/topics/${topic}`;
 }
 
 export function formatDate(date: string, locale: Locale) {
@@ -27,7 +33,7 @@ const en = {
     scroll: "Scroll to open", stages: ["The cover", "The inquiry", "The publication"],
     leaf: <>A closer<br /><em>reading</em> of<br />public life.</>, leafFoot: "Essays / Research / Two languages",
   },
-  opening: "An independent publication in formation",
+  opening: "Issue 01 — Autumn 2026",
   marquee: ["Law", "Politics", "Society", "Justice", "Institutions", "Democracy"],
   statementLabel: "A note from the editor",
   statement: "We begin with a simple editorial commitment: take the question seriously.",
@@ -45,25 +51,28 @@ const en = {
     closing: "Good order is never a given. It is a public question — the one this publication exists to ask.",
   },
   latest: { label: "Latest from the desk", title: <>Recently<br /><em>published.</em></>, all: "All essays", minRead: "min read" },
+  featured: "Featured", sample: "Sample", allTopics: "All", pieces: "pieces", piece: "piece",
+  research: { label: "From the research desk", title: <>Research<br /><em>notes.</em></>, all: "All research", abstract: "Abstract", findings: "Key findings" },
+  topicPage: { label: "Topic", empty: "Nothing published under this topic yet.", other: "Other topics" },
   formatsLabel: "The reading room / 01—02", formatsTitle: <>Two ways<br /><em>to inquire.</em></>,
   formatsIntro: "Different lengths, the same standard of care.",
   formats: [
     { name: "Essays", desc: "Short, researched arguments written for readers beyond the university.", meta: "Argument / Context / Public life" },
     { name: "Research", desc: "Longer work that puts sources, method and limits in full view.", meta: "Sources / Method / Analysis" },
   ],
-  status: "The first pieces are in development.",
+  status: "essays and research notes, in English and Turkish.",
   topics: {
     label: "Areas of inquiry", title: <>Four questions<br /><em>we keep asking.</em></>, hint: "Keep scrolling",
     items: [
-      { name: "Public life", desc: "How citizens argue, decide and live together in shared space." },
-      { name: "Institutions", desc: "Courts, parliaments and agencies — how they are designed and how they drift." },
-      { name: "Justice", desc: "Rights, remedies and the distance between law on paper and law in practice." },
-      { name: "Democracy", desc: "Elections, representation and the conditions that keep self-government alive." },
+      { slug: "public-life", name: "Public life", desc: "How citizens argue, decide and live together in shared space." },
+      { slug: "institutions", name: "Institutions", desc: "Courts, parliaments and agencies — how they are designed and how they drift." },
+      { slug: "justice", name: "Justice", desc: "Rights, remedies and the distance between law on paper and law in practice." },
+      { slug: "democracy", name: "Democracy", desc: "Elections, representation and the conditions that keep self-government alive." },
     ],
   },
-  closingLabel: "An opening, not an endpoint",
+  closingLabel: "Write for Eunomia",
   closing: <>Questions worth<br /><em>staying with.</em></>,
-  closingBody: "This publication is being built piece by piece. Read the editorial approach, or send us the question you cannot stop thinking about.",
+  closingBody: "We publish careful arguments for a public audience. If there is a question you cannot stop thinking about, pitch it to us.",
   aboutLink: "About the publication", contributeLink: "Contribute",
   sectionDescriptions: {
     essays: "Researched essays about law, politics and the way we live together.",
@@ -119,7 +128,7 @@ const tr: typeof en = {
     scroll: "Açmak için kaydır", stages: ["Kapak", "İnceleme", "Yayın"],
     leaf: <>Kamusal<br />hayata <em>yakından</em><br />bakmak.</>, leafFoot: "Yazılar / Araştırmalar / İki dil",
   },
-  opening: "Kuruluş aşamasında bağımsız bir yayın",
+  opening: "Sayı 01 — Sonbahar 2026",
   marquee: ["Hukuk", "Siyaset", "Toplum", "Adalet", "Kurumlar", "Demokrasi"],
   statementLabel: "Editörden bir not",
   statement: "Basit bir editoryal ilkeyle başlıyoruz: soruyu ciddiye almak.",
@@ -137,25 +146,28 @@ const tr: typeof en = {
     closing: "İyi düzen hiçbir zaman kendiliğinden gelmez. Kamusal bir sorudur — bu yayın da o soruyu sormak için var.",
   },
   latest: { label: "Masadan son yazılar", title: <>Yeni<br /><em>yayımlananlar.</em></>, all: "Tüm yazılar", minRead: "dk okuma" },
+  featured: "Öne çıkan", sample: "Örnek", allTopics: "Tümü", pieces: "çalışma", piece: "çalışma",
+  research: { label: "Araştırma masasından", title: <>Araştırma<br /><em>notları.</em></>, all: "Tüm araştırmalar", abstract: "Özet", findings: "Temel bulgular" },
+  topicPage: { label: "Konu", empty: "Bu konuda henüz bir şey yayımlanmadı.", other: "Diğer konular" },
   formatsLabel: "Okuma odası / 01—02", formatsTitle: <>İki farklı<br /><em>inceleme biçimi.</em></>,
   formatsIntro: "Farklı uzunluklar, aynı editoryal özen.",
   formats: [
     { name: "Yazılar", desc: "Üniversite dışındaki okura da seslenen, araştırmaya dayalı kısa savlar.", meta: "Sav / Bağlam / Kamusal hayat" },
     { name: "Araştırmalar", desc: "Kaynakları, yöntemi ve sınırları açıkça gösteren kapsamlı çalışmalar.", meta: "Kaynak / Yöntem / Analiz" },
   ],
-  status: "İlk çalışmalar hazırlanıyor.",
+  status: "Türkçe ve İngilizce yazılar ve araştırma notları.",
   topics: {
     label: "İnceleme alanları", title: <>Sormaya devam<br /><em>ettiğimiz dört soru.</em></>, hint: "Kaydırmaya devam et",
     items: [
-      { name: "Kamusal hayat", desc: "Yurttaşların ortak alanda nasıl tartıştığı, karar verdiği ve birlikte yaşadığı." },
-      { name: "Kurumlar", desc: "Mahkemeler, meclisler ve idareler — nasıl tasarlandıkları ve zamanla nasıl kaydıkları." },
-      { name: "Adalet", desc: "Haklar, başvuru yolları ve kâğıt üzerindeki hukuk ile uygulamadaki hukuk arasındaki mesafe." },
-      { name: "Demokrasi", desc: "Seçimler, temsil ve özyönetimi ayakta tutan koşullar." },
+      { slug: "public-life", name: "Kamusal hayat", desc: "Yurttaşların ortak alanda nasıl tartıştığı, karar verdiği ve birlikte yaşadığı." },
+      { slug: "institutions", name: "Kurumlar", desc: "Mahkemeler, meclisler ve idareler — nasıl tasarlandıkları ve zamanla nasıl kaydıkları." },
+      { slug: "justice", name: "Adalet", desc: "Haklar, başvuru yolları ve kâğıt üzerindeki hukuk ile uygulamadaki hukuk arasındaki mesafe." },
+      { slug: "democracy", name: "Demokrasi", desc: "Seçimler, temsil ve özyönetimi ayakta tutan koşullar." },
     ],
   },
-  closingLabel: "Başlangıç noktası",
+  closingLabel: "Eunomia için yaz",
   closing: <>Üzerinde durmaya<br /><em>değer sorular.</em></>,
-  closingBody: "Bu yayın adım adım kuruluyor. Editoryal yaklaşımımızı okuyabilir ya da aklından çıkmayan soruyu bize gönderebilirsin.",
+  closingBody: "Geniş bir okur kitlesi için özenli savlar yayımlıyoruz. Aklından çıkmayan bir soru varsa, bize öner.",
   aboutLink: "Yayın hakkında", contributeLink: "Katkı ver",
   sectionDescriptions: {
     essays: "Hukuk, siyaset ve birlikte yaşam üzerine araştırmaya dayalı yazılar.",

@@ -2,11 +2,13 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import GithubSlugger from "github-slugger";
-import { KINDS, LOCALES, type Kind, type Locale } from "./i18n";
+import { KINDS, LOCALES, TOPICS, type Kind, type Locale, type Topic } from "./i18n";
+import { SITE } from "./site";
 
 export type PostMeta = {
   kind: Kind; slug: string; locale: Locale;
   title: string; dek: string; date: string; author: string; tags: string[];
+  topic: Topic | null; sample: boolean; abstract: string; findings: string[];
   readingTime: number; locales: Locale[];
 };
 export type Post = PostMeta & { body: string; headings: { id: string; text: string }[] };
@@ -25,6 +27,7 @@ function load(kind: Kind, slug: string, locale: Locale): Post | null {
   if (!fs.existsSync(file)) return null;
   const { data, content } = matter(fs.readFileSync(file, "utf8"));
   if (data.draft && !showDrafts) return null;
+  if (data.sample && !SITE.showSamples) return null;
   const slugger = new GithubSlugger();
   const headings = [...content.matchAll(/^##\s+(.+)$/gm)].map(m => {
     const text = m[1].replace(/[*_`]/g, "").trim();
@@ -36,6 +39,10 @@ function load(kind: Kind, slug: string, locale: Locale): Post | null {
     title: String(data.title), dek: String(data.dek ?? ""),
     date: data.date instanceof Date ? data.date.toISOString() : String(data.date),
     author: String(data.author ?? ""), tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
+    topic: (TOPICS as readonly string[]).includes(data.topic) ? data.topic as Topic : null,
+    sample: Boolean(data.sample),
+    abstract: String(data.abstract ?? ""),
+    findings: Array.isArray(data.findings) ? data.findings.map(String) : [],
     readingTime: Math.max(1, Math.round(words / 220)),
     locales: LOCALES.filter(l => fs.existsSync(path.join(ROOT, kind, slug, `${l}.mdx`))),
     body: content, headings,
@@ -50,7 +57,7 @@ export function getPosts(locale: Locale, kind?: Kind): PostMeta[] {
   return (kind ? [kind] : KINDS)
     .flatMap(k => slugsOf(k).map(s => load(k, s, locale)))
     .filter((p): p is Post => p !== null)
-    .map(({ kind, slug, locale, title, dek, date, author, tags, readingTime, locales }) => ({ kind, slug, locale, title, dek, date, author, tags, readingTime, locales }))
+    .map(({ body, headings, ...meta }) => (void body, void headings, meta))
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 

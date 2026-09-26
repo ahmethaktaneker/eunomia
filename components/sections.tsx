@@ -1,40 +1,64 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { copy, href, PAGES, type Kind, type Locale } from "@/lib/i18n";
+import { copy, href, topicHref, PAGES, type Kind, type Locale } from "@/lib/i18n";
 import { getPosts } from "@/lib/content";
 import { SITE } from "@/lib/site";
 import { PostList } from "./post-list";
+import { TopicFilter } from "./topic-filter";
 import { Arrow, Shell } from "./shell";
 
 type Page = (typeof PAGES)[number];
 
-function InnerHero({ locale, section, kicker }: { locale: Locale; section: Page; kicker: ReactNode }) {
+function InnerHero({ locale, section, kicker, title, description }: { locale: Locale; section: Page; kicker: ReactNode; title?: string; description?: string }) {
   const c = copy[locale];
-  const index = PAGES.indexOf(section);
   return <>
-    <div className="inner-top"><span>EUNOMIA &nbsp; / &nbsp; 0{index + 1}</span><span>ENGLISH / TÜRKÇE</span></div>
+    <div className="inner-top"><span>EUNOMIA &nbsp; / &nbsp; {c.opening}</span></div>
     <div className="inner-hero">
-      <div><p className="kicker" data-intro-fade>{kicker}</p><h1 data-intro>{c.nav[section]}<span>.</span></h1></div>
-      <p data-intro-fade>{c.sectionDescriptions[section]}</p>
+      <div><p className="kicker" data-intro-fade>{kicker}</p><h1 data-intro>{title ?? c.nav[section]}<span>.</span></h1></div>
+      <p data-intro-fade>{description ?? c.sectionDescriptions[section]}</p>
     </div>
     <div className="hero-rule" data-rule />
   </>;
 }
 
+function TopicRows({ locale, current }: { locale: Locale; current?: string }) {
+  const c = copy[locale];
+  const all = getPosts(locale);
+  return <div className="archive-categories">
+    <p className="reveal">{current ? c.topicPage.other : c.areas}</p>
+    <div data-stagger>{c.topics.items.filter(t => t.slug !== current).map((topic, i) => <Link href={topicHref(locale, topic.slug)} key={topic.slug} className="category-row" data-cursor={c.cursor.open}>
+      <span>0{i + 1} · {all.filter(p => p.topic === topic.slug).length}</span><strong>{topic.name}</strong><em>{topic.desc}</em>
+    </Link>)}</div>
+  </div>;
+}
+
 export function ArchivePage({ locale, kind }: { locale: Locale; kind: Kind }) {
   const c = copy[locale];
   const posts = getPosts(locale, kind);
+  const options = c.topics.items.map(t => ({ slug: t.slug, name: t.name, count: posts.filter(p => p.topic === t.slug).length }));
   return <Shell locale={locale} section={kind} path={href(locale, kind)}>
     <main id="content" className="inner-page">
       <InnerHero locale={locale} section={kind} kicker={posts.length ? `${posts.length} / ${c.published}` : c.coming} />
       {posts.length
-        ? <section className="archive-list"><p className="section-index">00 / {c.archive}</p><PostList posts={posts} locale={locale} /></section>
-        : <section className="archive-opening"><span className="section-index reveal">00 / {c.coming}</span><p data-split>{c.archiveIntro[kind]}</p></section>}
-      <div className="archive-categories">
-        <p className="reveal">{c.areas}</p>
-        <div data-stagger>{c.topics.items.map((topic, i) => <div key={topic.name} className="category-row"><span>0{i + 1}</span><strong>{topic.name}</strong><em>{topic.desc}</em></div>)}</div>
-      </div>
+        ? <section className="archive-list"><TopicFilter options={options} allLabel={c.allTopics}><PostList posts={posts} locale={locale} /></TopicFilter></section>
+        : <section className="archive-opening"><span className="section-index reveal">{c.coming}</span><p data-split>{c.archiveIntro[kind]}</p></section>}
+      <TopicRows locale={locale} />
       <Link className="text-link archive-about reveal" href={href(locale, "about")}>{c.aboutLink} <Arrow /></Link>
+    </main>
+  </Shell>;
+}
+
+export function TopicPage({ locale, topic }: { locale: Locale; topic: string }) {
+  const c = copy[locale];
+  const t = c.topics.items.find(i => i.slug === topic)!;
+  const posts = getPosts(locale).filter(p => p.topic === topic);
+  return <Shell locale={locale} section="home" path={topicHref(locale, topic)} alternate={topicHref(locale === "en" ? "tr" : "en", topic)}>
+    <main id="content" className="inner-page">
+      <InnerHero locale={locale} section="essays" kicker={`${c.topicPage.label} / ${posts.length} ${posts.length === 1 ? c.piece : c.pieces}`} title={t.name} description={t.desc} />
+      {posts.length
+        ? <section className="archive-list"><PostList posts={posts} locale={locale} /></section>
+        : <section className="archive-opening"><p data-split>{c.topicPage.empty}</p></section>}
+      <TopicRows locale={locale} current={topic} />
     </main>
   </Shell>;
 }
@@ -91,7 +115,7 @@ export function NotFoundView({ locale }: { locale: Locale }) {
   const c = copy[locale];
   return <Shell locale={locale} section="home" path={href(locale, "home")}>
     <main id="content" className="inner-page not-found">
-      <div className="inner-top"><span>EUNOMIA &nbsp; / &nbsp; 404</span><span>ENGLISH / TÜRKÇE</span></div>
+      <div className="inner-top"><span>EUNOMIA &nbsp; / &nbsp; 404</span></div>
       <p className="nf-code" aria-hidden="true"><span data-parallax="10">404</span></p>
       <h1 data-intro>{c.notFound.title}</h1>
       <p className="nf-body" data-intro-fade>{c.notFound.body}</p>

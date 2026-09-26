@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { HomePage } from "@/components/home";
-import { AboutPage, ArchivePage, ContributePage } from "@/components/sections";
+import { AboutPage, ArchivePage, ContributePage, TopicPage } from "@/components/sections";
 import { ArticlePage } from "@/components/article";
 import { getPost, postParams } from "./content";
-import { copy, href, KINDS, PAGES, type Kind, type Locale } from "./i18n";
+import { copy, href, KINDS, PAGES, TOPICS, topicHref, type Kind, type Locale } from "./i18n";
 import { SITE } from "./site";
 
 const HOME_TITLE = { en: "Eunomia — Law, politics & public life", tr: "Eunomia — Hukuk, siyaset ve kamusal hayat" };
@@ -71,11 +71,16 @@ type ArticleParams = { params: Promise<{ section: string; slug: string }> };
 export function loadArticle(locale: Locale, section: string, slug: string) {
   return (KINDS as string[]).includes(section) ? getPost(section as Kind, slug, locale) : null;
 }
+export function findTopic(locale: Locale, section: string, slug: string) {
+  return section === "topics" && (TOPICS as readonly string[]).includes(slug) ? copy[locale].topics.items.find(t => t.slug === slug) ?? null : null;
+}
 export function articleRoute(locale: Locale) {
   return {
-    generateStaticParams: () => postParams(locale),
+    generateStaticParams: () => [...postParams(locale), ...TOPICS.map(slug => ({ section: "topics", slug }))],
     generateMetadata: async ({ params }: ArticleParams): Promise<Metadata> => {
       const { section, slug } = await params;
+      const topic = findTopic(locale, section, slug);
+      if (topic) return pageMetadata(locale, { en: topicHref("en", topic.slug), tr: topicHref("tr", topic.slug) }, topic.name, topic.desc);
       const post = loadArticle(locale, section, slug);
       if (!post) return {};
       const paths = Object.fromEntries(post.locales.map(l => [l, href(l, post.kind, slug)]));
@@ -83,6 +88,8 @@ export function articleRoute(locale: Locale) {
     },
     Page: async ({ params }: ArticleParams) => {
       const { section, slug } = await params;
+      const topic = findTopic(locale, section, slug);
+      if (topic) return <TopicPage locale={locale} topic={topic.slug} />;
       const post = loadArticle(locale, section, slug);
       if (!post) notFound();
       return <ArticlePage post={post} />;
